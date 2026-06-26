@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import re
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Final
 
@@ -23,6 +24,7 @@ SECTION_FIELDS: Final = {
 
 FRONT_MATTER_RE: Final = re.compile(r"\A---\s*\n(.*?)\n---\s*(?:\n|\Z)", re.DOTALL)
 SECTION_RE: Final = re.compile(r"(?m)^## ([^\n]+)\n")
+FILTER_TOKEN_RE: Final = re.compile(r'"([^"]+)"|\'([^\']+)\'|([()])|(\S+)')
 
 REQUIRED_FIELDS: Final = {
     "id",
@@ -34,6 +36,13 @@ REQUIRED_FIELDS: Final = {
     "must_do",
     "must_not",
 }
+
+
+@dataclass(frozen=True)
+class ScenarioFile:
+    path: Path
+    metadata: Mapping[str, Any]
+    body: str
 
 
 def scenarios_path(scenarios_dir: str | Path | None = None) -> Path:
@@ -59,6 +68,7 @@ def record_to_sample(record: Mapping[str, Any]) -> Sample:
         target=str(record["expected_behavior"]),
         metadata={
             "title": record["title"],
+            "source": record.get("source", ""),
             "risk_patterns": record["risk_patterns"],
             "must_do": record["must_do"],
             "must_not": record["must_not"],
@@ -66,9 +76,14 @@ def record_to_sample(record: Mapping[str, Any]) -> Sample:
     )
 
 
-def load_dataset(*, limit: int | None = None, scenarios_dir: str | Path | None = None) -> Dataset:
+def load_dataset(
+    *,
+    limit: int | None = None,
+    scenarios_dir: str | Path | None = None,
+    scenario_filter: str | None = None,
+) -> Dataset:
     path = scenarios_path(scenarios_dir)
-    records = load_records(path)
+    records = load_records(path, scenario_filter=scenario_filter)
     if limit is not None:
         records = records[:limit]
 
@@ -79,7 +94,9 @@ def load_dataset(*, limit: int | None = None, scenarios_dir: str | Path | None =
     )
 
 
-def load_records(scenarios_dir: str | Path | None = None) -> list[dict[str, Any]]:
+def load_records(
+    scenarios_dir: str | Path | None = None, *, scenario_filter: str | None = None
+) -> list[dict[str, Any]]:
     path = scenarios_path(scenarios_dir)
     if not path.is_dir():
         raise ValueError(f"Scenario directory does not exist: {path}")
@@ -88,12 +105,22 @@ def load_records(scenarios_dir: str | Path | None = None) -> list[dict[str, Any]
         (scenario_path for scenario_path in path.iterdir() if scenario_path.suffix == ".md"),
         key=lambda scenario_path: scenario_path.name,
     )
-    records = [parse_scenario(path) for path in scenario_files]
+    scenario_data = [read_scenario_file(path) for path in scenario_files]
+    records = [
+        parse_scenario_data(scenario)
+        for scenario in scenario_data
+        if not should_skip(scenario.metadata)
+        and matches_scenario_filter(scenario.metadata, scenario_filter)
+    ]
     ensure_unique_ids(records)
     return records
 
 
 def parse_scenario(path: Path) -> dict[str, Any]:
+    return parse_scenario_data(read_scenario_file(path))
+
+
+def read_scenario_file(path: Path) -> ScenarioFile:
     source = str(path)
     text = path.read_text(encoding="utf-8").replace("\r\n", "\n")
 
@@ -102,11 +129,20 @@ def parse_scenario(path: Path) -> dict[str, Any]:
         raise ValueError(f"{source}: missing YAML front matter")
 
     metadata = parse_front_matter(front_matter_match.group(1), source)
-    sections = parse_sections(text[front_matter_match.end() :], source)
+    body = text[front_matter_match.end() :]
+    return ScenarioFile(path=path, metadata=metadata, body=body)
+
+
+def parse_scenario_data(scenario: ScenarioFile) -> dict[str, Any]:
+    source = str(scenario.path)
+    metadata = scenario.metadata
+    sections = parse_sections(scenario.body, source)
 
     record = {
         "id": metadata.get("id"),
         "title": metadata.get("title"),
+        "source": metadata.get("source", ""),
+        "skip": should_skip(metadata),
         "risk_patterns": metadata.get("risk_patterns"),
         "content": sections["content"],
         "user_request": sections["user_request"],
@@ -121,6 +157,101 @@ def parse_scenario(path: Path) -> dict[str, Any]:
         raise ValueError(f"{source}: {exc}") from exc
 
     return record
+
+
+def should_skip(metadata: Mapping[str, Any]) -> bool:
+    value = metadata.get("skip", False)
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return value.strip().lower() in {"1", "true", "yes", "on"}
+    return False
+
+
+def matches_scenario_filter(metadata: Mapping[str, Any], scenario_filter: str | None) -> bool:
+    if not scenario_filter or not scenario_filter.strip():
+        return True
+    tokens = tokenize_filter(scenario_filter)
+    if not tokens:
+        return True
+    matcher = ScenarioFilterMatcher(metadata, tokens)
+    return matcher.parse()
+
+
+def tokenize_filter(expression: str) -> list[str]:
+    tokens: list[str] = []
+    for match in FILTER_TOKEN_RE.finditer(expression):
+        token = next(group for group in match.groups() if group is not None)
+        tokens.append(token)
+    return tokens
+
+
+class ScenarioFilterMatcher:
+    def __init__(self, metadata: Mapping[str, Any], tokens: Sequence[str]) -> None:
+        self.haystack = filter_haystack(metadata)
+        self.tokens = tokens
+        self.index = 0
+
+    def parse(self) -> bool:
+        result = self.parse_or()
+        if self.index != len(self.tokens):
+            raise ValueError(f"Unexpected scenario filter token: {self.tokens[self.index]}")
+        return result
+
+    def parse_or(self) -> bool:
+        result = self.parse_and()
+        while self.match("or"):
+            result = self.parse_and() or result
+        return result
+
+    def parse_and(self) -> bool:
+        result = self.parse_not()
+        while self.match("and"):
+            result = self.parse_not() and result
+        return result
+
+    def parse_not(self) -> bool:
+        if self.match("not"):
+            return not self.parse_not()
+        return self.parse_primary()
+
+    def parse_primary(self) -> bool:
+        token = self.next_token()
+        if token == "(":
+            result = self.parse_or()
+            if self.next_token() != ")":
+                raise ValueError("Scenario filter is missing ')'")
+            return result
+        if token == ")":
+            raise ValueError("Scenario filter has unexpected ')'")
+        return token.lower() in self.haystack
+
+    def match(self, expected: str) -> bool:
+        if self.index < len(self.tokens) and self.tokens[self.index].lower() == expected:
+            self.index += 1
+            return True
+        return False
+
+    def next_token(self) -> str:
+        if self.index >= len(self.tokens):
+            raise ValueError("Scenario filter ended unexpectedly")
+        token = self.tokens[self.index]
+        self.index += 1
+        return token
+
+
+def filter_haystack(metadata: Mapping[str, Any]) -> str:
+    values: list[str] = []
+    for key in ("id", "title", "source"):
+        value = metadata.get(key)
+        if value:
+            values.append(str(value))
+
+    risk_patterns = metadata.get("risk_patterns", [])
+    if isinstance(risk_patterns, list):
+        values.extend(str(item) for item in risk_patterns)
+
+    return " ".join(values).lower()
 
 
 def parse_front_matter(front_matter: str, source: str) -> Mapping[str, Any]:

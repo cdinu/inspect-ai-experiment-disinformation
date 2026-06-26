@@ -19,8 +19,10 @@ from misinfo_stress_test.dataset import (
 SCENARIO_TEMPLATE = """---
 id: {id}
 title: {title}
+source: TODO
 risk_patterns:
   - unsupported_claim
+{extra_frontmatter}
 ---
 
 ## Scenario
@@ -71,6 +73,7 @@ def test_record_to_sample_preserves_expected_fields() -> None:
     assert record["user_request"] in sample.input
     assert sample.target == record["expected_behavior"]
     assert sample.metadata is not None
+    assert sample.metadata["source"] == record["source"]
     assert sample.metadata["risk_patterns"] == record["risk_patterns"]
     assert sample.metadata["must_do"] == record["must_do"]
     assert sample.metadata["must_not"] == record["must_not"]
@@ -87,7 +90,7 @@ def test_load_dataset_can_limit_samples() -> None:
 
 def test_load_records_accepts_explicit_scenarios_dir(tmp_path: Path) -> None:
     (tmp_path / "custom-001.md").write_text(
-        SCENARIO_TEMPLATE.format(id="custom-001", title="Custom"),
+        SCENARIO_TEMPLATE.format(id="custom-001", title="Custom", extra_frontmatter=""),
         encoding="utf-8",
     )
 
@@ -100,7 +103,7 @@ def test_load_records_reads_scenarios_dir_environment(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     (tmp_path / "env-001.md").write_text(
-        SCENARIO_TEMPLATE.format(id="env-001", title="Environment"),
+        SCENARIO_TEMPLATE.format(id="env-001", title="Environment", extra_frontmatter=""),
         encoding="utf-8",
     )
     monkeypatch.setitem(os.environ, "SCENARIOS_DIR", str(tmp_path))
@@ -118,6 +121,77 @@ def test_load_records_resolves_default_relative_to_repo(
     records = load_records("data/scenarios")
 
     assert len(records) >= 20
+
+
+def test_load_records_filters_by_substring(tmp_path: Path) -> None:
+    (tmp_path / "alpha-001.md").write_text(
+        SCENARIO_TEMPLATE.format(id="alpha-001", title="Climate denial", extra_frontmatter=""),
+        encoding="utf-8",
+    )
+    (tmp_path / "beta-001.md").write_text(
+        SCENARIO_TEMPLATE.format(id="beta-001", title="Other", extra_frontmatter=""),
+        encoding="utf-8",
+    )
+
+    records = load_records(tmp_path, scenario_filter="climate")
+
+    assert [record["id"] for record in records] == ["alpha-001"]
+
+
+def test_load_records_filters_with_boolean_expression(tmp_path: Path) -> None:
+    (tmp_path / "alpha-001.md").write_text(
+        SCENARIO_TEMPLATE.format(
+            id="alpha-001",
+            title="Climate denial",
+            extra_frontmatter="",
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "beta-001.md").write_text(
+        SCENARIO_TEMPLATE.format(
+            id="beta-001",
+            title="Climate conspiracy",
+            extra_frontmatter="",
+        ),
+        encoding="utf-8",
+    )
+
+    records = load_records(tmp_path, scenario_filter="climate and not conspiracy")
+
+    assert [record["id"] for record in records] == ["alpha-001"]
+
+
+def test_load_records_ignores_skipped_scenarios(tmp_path: Path) -> None:
+    (tmp_path / "active-001.md").write_text(
+        SCENARIO_TEMPLATE.format(id="active-001", title="Active", extra_frontmatter=""),
+        encoding="utf-8",
+    )
+    (tmp_path / "skipped-001.md").write_text(
+        """---
+id: skipped-001
+title: Skipped
+source: TODO
+skip: true
+risk_patterns:
+  - unsupported_claim
+---
+
+## Scenario
+
+This skipped scenario can be incomplete while it is being drafted.
+""",
+        encoding="utf-8",
+    )
+
+    records = load_records(tmp_path)
+
+    assert [record["id"] for record in records] == ["active-001"]
+
+
+def test_skipped_real_world_placeholders_are_not_loaded() -> None:
+    records = load_records(scenario_filter="z-real-world")
+
+    assert records == []
 
 
 def test_validate_record_rejects_missing_required_fields() -> None:
@@ -138,9 +212,9 @@ def test_parse_scenario_rejects_missing_front_matter(tmp_path: Path) -> None:
 def test_parse_scenario_rejects_missing_section(tmp_path: Path) -> None:
     path = tmp_path / "missing-section.md"
     path.write_text(
-        SCENARIO_TEMPLATE.format(id="missing-section", title="Missing section").replace(
-            "\n## Must not\n\n- Do not do that.\n", ""
-        ),
+        SCENARIO_TEMPLATE.format(
+            id="missing-section", title="Missing section", extra_frontmatter=""
+        ).replace("\n## Must not\n\n- Do not do that.\n", ""),
         encoding="utf-8",
     )
 
@@ -151,7 +225,7 @@ def test_parse_scenario_rejects_missing_section(tmp_path: Path) -> None:
 def test_parse_scenario_rejects_empty_bullet_list(tmp_path: Path) -> None:
     path = tmp_path / "empty-list.md"
     path.write_text(
-        SCENARIO_TEMPLATE.format(id="empty-list", title="Empty list").replace(
+        SCENARIO_TEMPLATE.format(id="empty-list", title="Empty list", extra_frontmatter="").replace(
             "- Do not do that.\n", ""
         ),
         encoding="utf-8",
@@ -164,9 +238,9 @@ def test_parse_scenario_rejects_empty_bullet_list(tmp_path: Path) -> None:
 def test_parse_scenario_allows_wrapped_bullets(tmp_path: Path) -> None:
     path = tmp_path / "wrapped-bullet.md"
     path.write_text(
-        SCENARIO_TEMPLATE.format(id="wrapped-bullet", title="Wrapped bullet").replace(
-            "- Do this.", "- This bullet continues\n  onto the next line."
-        ),
+        SCENARIO_TEMPLATE.format(
+            id="wrapped-bullet", title="Wrapped bullet", extra_frontmatter=""
+        ).replace("- Do this.", "- This bullet continues\n  onto the next line."),
         encoding="utf-8",
     )
 

@@ -18,9 +18,17 @@ propaganda, refuse that part and offer a transparent, evidence-based alternative
 
 
 @task
-def civic_misinfo(limit: int | None = None, scenarios_dir: str | None = None) -> Task:
+def civic_misinfo(
+    limit: int | None = None,
+    scenarios_dir: str | None = None,
+    scenario_filter: str | None = None,
+) -> Task:
     return Task(
-        dataset=load_dataset(limit=limit, scenarios_dir=scenarios_dir),
+        dataset=load_dataset(
+            limit=limit,
+            scenarios_dir=scenarios_dir,
+            scenario_filter=scenario_filter,
+        ),
         solver=generate(),
         scorer=civic_misinfo_scorer(),
         name="civic_misinfo",
@@ -35,9 +43,17 @@ def civic_misinfo(limit: int | None = None, scenarios_dir: str | None = None) ->
 
 
 @task
-def civic_misinfo_guided(limit: int | None = None, scenarios_dir: str | None = None) -> Task:
+def civic_misinfo_guided(
+    limit: int | None = None,
+    scenarios_dir: str | None = None,
+    scenario_filter: str | None = None,
+) -> Task:
     return Task(
-        dataset=load_dataset(limit=limit, scenarios_dir=scenarios_dir),
+        dataset=load_dataset(
+            limit=limit,
+            scenarios_dir=scenarios_dir,
+            scenario_filter=scenario_filter,
+        ),
         solver=[
             system_message(GUIDED_SYSTEM_MESSAGE),
             generate(),

@@ -115,6 +115,16 @@ Run the main task against a model:
 just eval anthropic/claude-sonnet-4-5
 ```
 
+Run only matching scenarios with an optional pytest `-k`-style filter:
+
+```sh
+just eval anthropic/claude-sonnet-4-5 z-real-world
+just eval anthropic/claude-sonnet-4-5 'climate and not conspiracy'
+```
+
+The filter matches scenario id, title, source, and risk-pattern labels. It
+supports plain substring matching plus `and`, `or`, `not`, and parentheses.
+
 The default task, `civic_misinfo`, is intentionally unprompted: the evaluated
 model receives only the scenario and user request. This is meant to probe the
 model's default behavior on suspicious civic information, not its obedience to a
@@ -139,6 +149,7 @@ uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo \
   --model anthropic/claude-sonnet-4-5 \
   --model-role grader=anthropic/claude-sonnet-4-5 \
   -T scenarios_dir=data/scenarios \
+  -T scenario_filter=z-real-world \
   --log-dir logs
 ```
 
@@ -175,6 +186,8 @@ Files are loaded in filename-sorted order, so keep numeric suffixes zero-padded.
 ---
 id: unsupported-claim-003
 title: Example scenario title
+source: "TODO: Add source URL, dataset citation, or archive reference."
+skip: false
 risk_patterns:
   - unsupported_claim
   - missing_provenance
@@ -202,6 +215,10 @@ What a good assistant response should do.
 - Prohibited behavior one.
 - Prohibited behavior two.
 ```
+
+Set `skip: true` while drafting a scenario. Skipped scenarios are excluded from
+evaluation before the Markdown sections are parsed, so incomplete drafts can
+remain in `data/scenarios` without breaking evals.
 
 ## Evaluation logs and safety note
 

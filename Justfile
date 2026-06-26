@@ -30,17 +30,17 @@ test:
 list:
     uv run inspect list tasks 'src/**/*.py'
 
-eval model:
+eval model filter="":
     mkdir -p {{log_dir}}
-    HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo --model {{model}} --model-role grader={{model}} -T scenarios_dir={{scenarios_dir}} --log-dir {{log_dir}}
+    filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo --model {{model}} --model-role grader={{model}} -T scenarios_dir={{scenarios_dir}} "${filter_args[@]}" --log-dir {{log_dir}}
 
-eval-guided model:
+eval-guided model filter="":
     mkdir -p {{log_dir}}
-    HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo_guided --model {{model}} --model-role grader={{model}} -T scenarios_dir={{scenarios_dir}} --log-dir {{log_dir}}
+    filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo_guided --model {{model}} --model-role grader={{model}} -T scenarios_dir={{scenarios_dir}} "${filter_args[@]}" --log-dir {{log_dir}}
 
-smoke:
+smoke filter="":
     mkdir -p {{smoke_log_dir}}
-    HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo --model mockllm/model --model-role grader=mockllm/model -T scenarios_dir={{scenarios_dir}} --limit 1 --display none --log-dir {{smoke_log_dir}}
+    filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo --model mockllm/model --model-role grader=mockllm/model -T scenarios_dir={{scenarios_dir}} "${filter_args[@]}" --limit 1 --display none --log-dir {{smoke_log_dir}}
 
 view:
     uv run inspect view --log-dir {{log_dir}}
