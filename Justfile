@@ -10,7 +10,7 @@ smoke_log_dir := env_var_or_default("SMOKE_LOG_DIR", "/private/tmp/misinfo-inspe
 include_source_metadata := env_var_or_default("INCLUDE_SOURCE_METADATA", "false")
 inspect_home := env_var_or_default("INSPECT_HOME", "/private/tmp/misinfo-inspect-home")
 trace_file := env_var_or_default("INSPECT_TRACE_FILE", "/private/tmp/misinfo-inspect-trace.log")
-model_choices := env_var_or_default("MODEL_CHOICES", "anthropic/claude-sonnet-4-5 openrouter/free openrouter/deepseek/deepseek-v4-flash openrouter/x-ai/grok-4.3 mockllm/model")
+model_choices := env_var_or_default("MODEL_CHOICES", "anthropic/claude-sonnet-4-5 mistral/mistral-medium-3-5 openrouter/free openrouter/deepseek/deepseek-v4-flash openrouter/xiaomi/mimo-v2.5 openrouter/tencent/hy3-preview openrouter/x-ai/grok-4.3 mockllm/model")
 
 sync:
     uv sync --group dev
