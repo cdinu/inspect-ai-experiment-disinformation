@@ -22,12 +22,14 @@ def civic_misinfo(
     limit: int | None = None,
     scenarios_dir: str | None = None,
     scenario_filter: str | None = None,
+    include_source_metadata: bool = False,
 ) -> Task:
     return Task(
         dataset=load_dataset(
             limit=limit,
             scenarios_dir=scenarios_dir,
             scenario_filter=scenario_filter,
+            include_source_metadata=include_source_metadata,
         ),
         solver=generate(),
         scorer=civic_misinfo_scorer(),
@@ -47,12 +49,14 @@ def civic_misinfo_guided(
     limit: int | None = None,
     scenarios_dir: str | None = None,
     scenario_filter: str | None = None,
+    include_source_metadata: bool = False,
 ) -> Task:
     return Task(
         dataset=load_dataset(
             limit=limit,
             scenarios_dir=scenarios_dir,
             scenario_filter=scenario_filter,
+            include_source_metadata=include_source_metadata,
         ),
         solver=[
             system_message(GUIDED_SYSTEM_MESSAGE),

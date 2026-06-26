@@ -15,6 +15,7 @@ SCENARIOS_DIR_ENV: Final = "SCENARIOS_DIR"
 REPO_ROOT: Final = Path(__file__).resolve().parents[2]
 
 SECTION_FIELDS: Final = {
+    "About": "about",
     "Scenario": "content",
     "User request": "user_request",
     "Expected behavior": "expected_behavior",
@@ -37,6 +38,36 @@ REQUIRED_FIELDS: Final = {
     "must_not",
 }
 
+SOURCE_FIELDS: Final = (
+    "source",
+    "source_type",
+    "source_url",
+    "source_title",
+    "source_outlet",
+    "source_publication",
+    "source_author",
+    "source_date",
+    "real_world_context",
+    "real_entities",
+)
+
+GRADER_CONTEXT_FIELDS: Final = (
+    "about",
+    "source",
+    "source_type",
+    "source_url",
+    "source_title",
+    "source_outlet",
+    "source_publication",
+    "source_author",
+    "source_date",
+    "real_world_context",
+    "real_entities",
+    "expected_behavior",
+    "must_do",
+    "must_not",
+)
+
 
 @dataclass(frozen=True)
 class ScenarioFile:
@@ -57,18 +88,30 @@ def scenarios_path(scenarios_dir: str | Path | None = None) -> Path:
     return REPO_ROOT / path
 
 
-def record_to_sample(record: Mapping[str, Any]) -> Sample:
+def record_to_sample(record: Mapping[str, Any], *, include_source_metadata: bool = False) -> Sample:
     validate_record(record)
 
-    input_text = f"Scenario:\n{record['content']}\n\nUser request:\n{record['user_request']}"
+    input_parts = []
+
+    if include_source_metadata:
+        source_context = source_metadata_text(record)
+        if source_context:
+            input_parts.append(f"Source metadata:\n{source_context}")
+
+    input_parts.append(record["content"])
+    input_parts.append(record["user_request"])
+
+    input_text = "\n\n".join(input_parts)
+    target = grader_criterion(record)
 
     return Sample(
         id=str(record["id"]),
         input=input_text,
-        target=str(record["expected_behavior"]),
+        target=target,
         metadata={
             "title": record["title"],
-            "source": record.get("source", ""),
+            "about": record.get("about", ""),
+            **source_metadata(record),
             "risk_patterns": record["risk_patterns"],
             "must_do": record["must_do"],
             "must_not": record["must_not"],
@@ -81,6 +124,7 @@ def load_dataset(
     limit: int | None = None,
     scenarios_dir: str | Path | None = None,
     scenario_filter: str | None = None,
+    include_source_metadata: bool = False,
 ) -> Dataset:
     path = scenarios_path(scenarios_dir)
     records = load_records(path, scenario_filter=scenario_filter)
@@ -88,7 +132,10 @@ def load_dataset(
         records = records[:limit]
 
     return MemoryDataset(
-        samples=[record_to_sample(record) for record in records],
+        samples=[
+            record_to_sample(record, include_source_metadata=include_source_metadata)
+            for record in records
+        ],
         name="civic_misinfo",
         location=str(path),
     )
@@ -141,7 +188,7 @@ def parse_scenario_data(scenario: ScenarioFile) -> dict[str, Any]:
     record = {
         "id": metadata.get("id"),
         "title": metadata.get("title"),
-        "source": metadata.get("source", ""),
+        "about": sections.get("about", ""),
         "skip": should_skip(metadata),
         "risk_patterns": metadata.get("risk_patterns"),
         "content": sections["content"],
@@ -150,6 +197,7 @@ def parse_scenario_data(scenario: ScenarioFile) -> dict[str, Any]:
         "must_do": parse_bullets(sections["must_do"], source, "Must do"),
         "must_not": parse_bullets(sections["must_not"], source, "Must not"),
     }
+    record.update(source_metadata(metadata))
 
     try:
         validate_record(record)
@@ -157,6 +205,36 @@ def parse_scenario_data(scenario: ScenarioFile) -> dict[str, Any]:
         raise ValueError(f"{source}: {exc}") from exc
 
     return record
+
+
+def source_metadata(record: Mapping[str, Any]) -> dict[str, Any]:
+    return {field: record.get(field, "") for field in SOURCE_FIELDS}
+
+
+def source_metadata_text(record: Mapping[str, Any]) -> str:
+    lines = []
+    for key, value in source_metadata(record).items():
+        if value:
+            lines.append(f"{key}: {value}")
+    return "\n".join(lines)
+
+
+def grader_criterion(record: Mapping[str, Any]) -> str:
+    sections = []
+    for key in GRADER_CONTEXT_FIELDS:
+        value = record.get(key)
+        if not value:
+            continue
+        title = key.replace("_", " ").title()
+        body = criterion_value_text(value)
+        sections.append(f"{title}:\n{body}")
+    return "\n\n".join(sections)
+
+
+def criterion_value_text(value: Any) -> str:
+    if isinstance(value, list):
+        return "\n".join(f"- {item}" for item in value)
+    return str(value)
 
 
 def should_skip(metadata: Mapping[str, Any]) -> bool:
@@ -242,7 +320,7 @@ class ScenarioFilterMatcher:
 
 def filter_haystack(metadata: Mapping[str, Any]) -> str:
     values: list[str] = []
-    for key in ("id", "title", "source"):
+    for key in ("id", "title", *SOURCE_FIELDS):
         value = metadata.get(key)
         if value:
             values.append(str(value))
@@ -281,7 +359,8 @@ def parse_sections(body: str, source: str) -> dict[str, str]:
             raise ValueError(f"{source}: section '{heading}' must not be empty")
         sections[SECTION_FIELDS[heading]] = value
 
-    missing = set(SECTION_FIELDS.values()) - set(sections)
+    required_sections = set(SECTION_FIELDS.values()) - {"about"}
+    missing = required_sections - set(sections)
     if missing:
         fields = ", ".join(sorted(missing))
         raise ValueError(f"{source}: missing required sections: {fields}")

@@ -51,3 +51,12 @@ def test_guided_task_builds_with_limited_dataset() -> None:
     assert task.metadata["prompt_mode"] == "guided"
     assert task.dataset is not None
     assert len(list(task.dataset)) == 2
+
+
+def test_task_can_load_the_advanced_directory() -> None:
+    # The advanced set is the same task pointed at a different scenarios directory.
+    task = civic_misinfo(limit=2, scenarios_dir="data/advanced")
+
+    assert isinstance(task, Task)
+    assert task.dataset is not None
+    assert len(list(task.dataset)) == 2

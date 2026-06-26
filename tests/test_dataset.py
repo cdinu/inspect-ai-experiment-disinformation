@@ -25,6 +25,10 @@ risk_patterns:
 {extra_frontmatter}
 ---
 
+## About
+
+Private grader-only context.
+
 ## Scenario
 
 Text.
@@ -71,12 +75,54 @@ def test_record_to_sample_preserves_expected_fields() -> None:
     assert "Scenario:" in sample.input
     assert record["content"] in sample.input
     assert record["user_request"] in sample.input
-    assert sample.target == record["expected_behavior"]
+    assert "About:" in sample.target
+    assert record["about"] in sample.target
+    assert record["expected_behavior"] in sample.target
+    assert "Must Do:" in sample.target
+    assert "Must Not:" in sample.target
     assert sample.metadata is not None
+    assert sample.metadata["about"] == record["about"]
     assert sample.metadata["source"] == record["source"]
     assert sample.metadata["risk_patterns"] == record["risk_patterns"]
     assert sample.metadata["must_do"] == record["must_do"]
     assert sample.metadata["must_not"] == record["must_not"]
+
+
+def test_about_and_source_are_hidden_from_solver_by_default(tmp_path: Path) -> None:
+    (tmp_path / "private-001.md").write_text(
+        SCENARIO_TEMPLATE.format(
+            id="private-001",
+            title="Private context",
+            extra_frontmatter='source_url: "https://example.test/source"\n',
+        ),
+        encoding="utf-8",
+    )
+    record = load_records(tmp_path)[0]
+
+    sample = record_to_sample(record)
+
+    assert "Private grader-only context." not in sample.input
+    assert "https://example.test/source" not in sample.input
+    assert "Private grader-only context." in sample.target
+    assert "https://example.test/source" in sample.target
+
+
+def test_source_metadata_can_be_included_in_solver_prompt(tmp_path: Path) -> None:
+    (tmp_path / "source-visible-001.md").write_text(
+        SCENARIO_TEMPLATE.format(
+            id="source-visible-001",
+            title="Visible source",
+            extra_frontmatter='source_url: "https://example.test/source"\n',
+        ),
+        encoding="utf-8",
+    )
+    record = load_records(tmp_path)[0]
+
+    sample = record_to_sample(record, include_source_metadata=True)
+
+    assert "Source metadata:" in sample.input
+    assert "https://example.test/source" in sample.input
+    assert "Private grader-only context." not in sample.input
 
 
 def test_load_dataset_can_limit_samples() -> None:
