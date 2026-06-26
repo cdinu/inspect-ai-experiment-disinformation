@@ -4,7 +4,14 @@ version = "0.1.0"
 description = "An experiment to evaluate how different AI models react to misinformation, hidden propaganda, etc."
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = ["anthropic>=0.111.0", "inspect-ai>=0.3.241", "pyyaml>=6.0.3"]
+dependencies = [
+    "anthropic>=0.111.0",
+    "inspect-ai>=0.3.241",
+    "mistralai>=2.5.0",
+    "openai>=2.44.0",
+    "openrouter>=0.10.4",
+    "pyyaml>=6.0.3",
+]
 
 [dependency-groups]
 dev = [
