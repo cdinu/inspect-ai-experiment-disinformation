@@ -130,9 +130,11 @@ The supported path variables are:
 * `SMOKE_LOG_DIR`: smoke-test log directory, default `/private/tmp/misinfo-inspect-logs`.
 * `INCLUDE_SOURCE_METADATA`: whether source fields are shown to the evaluated model,
   default `false`.
-* `MODEL_CHOICES`: space-separated models shown by the interactive `just`
-  selector, default `anthropic/claude-sonnet-4-5 openai/gpt-4.1-mini
-  mockllm/model`.
+* `MODEL_CHOICES`: space-separated models printed by `just models` for easy
+  copy/paste.
+* `GRADER_MODEL`: optional fixed grader model. If unset, single-model runs use
+  the evaluated model as grader, while comma-separated model runs let Inspect
+  use its default model role behavior.
 
 ## Running evaluations
 
@@ -145,23 +147,22 @@ just list
 Run the main task against a model:
 
 ```sh
+just models
 just eval anthropic/claude-sonnet-4-5
 ```
 
-Or pick from the predefined model menu:
+Run the same task against several models with Inspect's comma-separated model
+syntax:
 
 ```sh
-just models
-just eval select
-just eval-select z-real-world
+just eval 'anthropic/claude-sonnet-4-5,mockllm/model'
+just eval 'anthropic/claude-sonnet-4-5,mockllm/model' z-real-world
 ```
 
-The `select` value works for `eval`, `eval-guided`, `eval-advanced`, and
-`eval-advanced-guided`. The `*-select` recipes are shorter aliases. Override the
-menu per run with `MODEL_CHOICES`:
+For cross-model comparisons, prefer one fixed grader:
 
 ```sh
-MODEL_CHOICES="anthropic/claude-sonnet-4-5 openai/gpt-4.1-mini" just eval select
+GRADER_MODEL=anthropic/claude-sonnet-4-5 just eval 'openai/gpt-4.1-mini,mockllm/model'
 ```
 
 Run only matching scenarios with an optional pytest `-k`-style filter:

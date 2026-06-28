@@ -11,6 +11,12 @@ include_source_metadata := env_var_or_default("INCLUDE_SOURCE_METADATA", "false"
 inspect_home := env_var_or_default("INSPECT_HOME", "/private/tmp/misinfo-inspect-home")
 trace_file := env_var_or_default("INSPECT_TRACE_FILE", "/private/tmp/misinfo-inspect-trace.log")
 model_choices := env_var_or_default("MODEL_CHOICES", "anthropic/claude-sonnet-4-5 mistral/mistral-medium-3-5 openrouter/free openrouter/deepseek/deepseek-v4-flash openrouter/xiaomi/mimo-v2.5 openrouter/tencent/hy3-preview openrouter/x-ai/grok-4.3 mockllm/model")
+grader_model := env_var_or_default("GRADER_MODEL", "")
+
+default:
+    @just --list
+    @printf '\nModels:\n'
+    @printf '%s\n' {{model_choices}}
 
 sync:
     uv sync --group dev
@@ -38,17 +44,11 @@ models:
 
 eval model filter="":
     @mkdir -p {{log_dir}}
-    @selected_model="{{model}}"; if [[ "$selected_model" == "select" ]]; then choices=({{model_choices}}); PS3="Select model: "; select picked in "${choices[@]}"; do if [[ -n "$picked" ]]; then selected_model="$picked"; break; fi; echo "Invalid selection" >&2; done; fi; filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo --model "$selected_model" --model-role grader="$selected_model" -T scenarios_dir={{scenarios_dir}} -T include_source_metadata={{include_source_metadata}} "${filter_args[@]}" --log-dir {{log_dir}}
+    @model_arg="{{model}}"; role_args=(); if [[ -n "{{grader_model}}" ]]; then role_args=(--model-role "grader={{grader_model}}"); elif [[ "$model_arg" != *,* ]]; then role_args=(--model-role "grader=$model_arg"); fi; filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo --model "$model_arg" "${role_args[@]}" -T scenarios_dir={{scenarios_dir}} -T include_source_metadata={{include_source_metadata}} "${filter_args[@]}" --log-dir {{log_dir}}
 
 eval-guided model filter="":
     @mkdir -p {{log_dir}}
-    @selected_model="{{model}}"; if [[ "$selected_model" == "select" ]]; then choices=({{model_choices}}); PS3="Select model: "; select picked in "${choices[@]}"; do if [[ -n "$picked" ]]; then selected_model="$picked"; break; fi; echo "Invalid selection" >&2; done; fi; filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo_guided --model "$selected_model" --model-role grader="$selected_model" -T scenarios_dir={{scenarios_dir}} -T include_source_metadata={{include_source_metadata}} "${filter_args[@]}" --log-dir {{log_dir}}
-
-eval-select filter="":
-    @just eval select "{{filter}}"
-
-eval-guided-select filter="":
-    @just eval-guided select "{{filter}}"
+    @model_arg="{{model}}"; role_args=(); if [[ -n "{{grader_model}}" ]]; then role_args=(--model-role "grader={{grader_model}}"); elif [[ "$model_arg" != *,* ]]; then role_args=(--model-role "grader=$model_arg"); fi; filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo_guided --model "$model_arg" "${role_args[@]}" -T scenarios_dir={{scenarios_dir}} -T include_source_metadata={{include_source_metadata}} "${filter_args[@]}" --log-dir {{log_dir}}
 
 smoke filter="":
     @mkdir -p {{smoke_log_dir}}
@@ -60,17 +60,11 @@ fetch-advanced source="all" per_label="3":
 
 eval-advanced model filter="":
     mkdir -p {{log_dir}}
-    selected_model="{{model}}"; if [[ "$selected_model" == "select" ]]; then choices=({{model_choices}}); PS3="Select model: "; select picked in "${choices[@]}"; do if [[ -n "$picked" ]]; then selected_model="$picked"; break; fi; echo "Invalid selection" >&2; done; fi; filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo --model "$selected_model" --model-role grader="$selected_model" -T scenarios_dir={{advanced_dir}} -T include_source_metadata={{include_source_metadata}} "${filter_args[@]}" --log-dir {{log_dir}}
+    model_arg="{{model}}"; role_args=(); if [[ -n "{{grader_model}}" ]]; then role_args=(--model-role "grader={{grader_model}}"); elif [[ "$model_arg" != *,* ]]; then role_args=(--model-role "grader=$model_arg"); fi; filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo --model "$model_arg" "${role_args[@]}" -T scenarios_dir={{advanced_dir}} -T include_source_metadata={{include_source_metadata}} "${filter_args[@]}" --log-dir {{log_dir}}
 
 eval-advanced-guided model filter="":
     mkdir -p {{log_dir}}
-    selected_model="{{model}}"; if [[ "$selected_model" == "select" ]]; then choices=({{model_choices}}); PS3="Select model: "; select picked in "${choices[@]}"; do if [[ -n "$picked" ]]; then selected_model="$picked"; break; fi; echo "Invalid selection" >&2; done; fi; filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo_guided --model "$selected_model" --model-role grader="$selected_model" -T scenarios_dir={{advanced_dir}} -T include_source_metadata={{include_source_metadata}} "${filter_args[@]}" --log-dir {{log_dir}}
-
-eval-advanced-select filter="":
-    just eval-advanced select "{{filter}}"
-
-eval-advanced-guided-select filter="":
-    just eval-advanced-guided select "{{filter}}"
+    model_arg="{{model}}"; role_args=(); if [[ -n "{{grader_model}}" ]]; then role_args=(--model-role "grader={{grader_model}}"); elif [[ "$model_arg" != *,* ]]; then role_args=(--model-role "grader=$model_arg"); fi; filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo_guided --model "$model_arg" "${role_args[@]}" -T scenarios_dir={{advanced_dir}} -T include_source_metadata={{include_source_metadata}} "${filter_args[@]}" --log-dir {{log_dir}}
 
 view:
     uv run inspect view --log-dir {{log_dir}}
