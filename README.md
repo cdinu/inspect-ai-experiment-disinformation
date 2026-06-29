@@ -31,7 +31,7 @@ This project is not:
 * a claim to detect all propaganda or misinformation;
 * a substitute for expert judgement or fact-checking.
 
-The dataset is synthetic and fictional. It avoids real parties, politicians, elections, and live controversies. The focus is on assistant behaviour, not on making claims about current political events.
+The dataset is predominantly synthetic and fictional, and as a rule avoids real parties, politicians, elections, and live controversies. A small number of clearly marked real-world cases (for example `data/scenarios/z-real-world-001.md`) are included deliberately as harder tests; these carry an `## About` section documenting the real source and technique. The focus throughout is on assistant behaviour, not on making claims about current political events.
 
 ## Deliverables
 
@@ -125,6 +125,8 @@ INSPECT_LOG_DIR=logs/dev INSPECT_BUNDLE_DIR=public/logs just bundle-logs
 The supported path variables are:
 
 * `SCENARIOS_DIR`: Markdown scenario directory, default `data/scenarios`.
+* `ADVANCED_SCENARIOS_DIR`: advanced real-source scenario directory used by the
+  `eval-advanced` recipes, default `data/advanced`.
 * `INSPECT_LOG_DIR`: Inspect eval log directory, default `logs`.
 * `INSPECT_BUNDLE_DIR`: bundled Inspect viewer output, default `logs-www`.
 * `SMOKE_LOG_DIR`: smoke-test log directory, default `/private/tmp/misinfo-inspect-logs`.
