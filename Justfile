@@ -5,7 +5,8 @@ export UV_CACHE_DIR := env_var_or_default("UV_CACHE_DIR", "/private/tmp/uv-cache
 scenarios_dir := env_var_or_default("SCENARIOS_DIR", "data/scenarios")
 advanced_dir := env_var_or_default("ADVANCED_SCENARIOS_DIR", "data/advanced")
 log_dir := env_var_or_default("INSPECT_LOG_DIR", "logs")
-bundle_dir := env_var_or_default("INSPECT_BUNDLE_DIR", "logs-www")
+bundle_dir := env_var_or_default("INSPECT_BUNDLE_DIR", "docs/logs")
+docs_dir := env_var_or_default("DOCS_DIR", "docs")
 smoke_log_dir := env_var_or_default("SMOKE_LOG_DIR", "/private/tmp/misinfo-inspect-logs")
 include_source_metadata := env_var_or_default("INCLUDE_SOURCE_METADATA", "false")
 inspect_home := env_var_or_default("INSPECT_HOME", "/private/tmp/misinfo-inspect-home")
@@ -69,7 +70,10 @@ eval-advanced-guided model filter="":
 view:
     uv run inspect view --log-dir {{log_dir}}
 
+# Export the committed logs as a static viewer under docs/ for GitHub Pages.
 bundle-logs:
     uv run inspect view bundle --log-dir {{log_dir}} --output-dir {{bundle_dir}} --overwrite
+    @touch {{docs_dir}}/.nojekyll
+    @printf 'Bundled %s into %s. Landing page: %s/index.html\n' '{{log_dir}}' '{{bundle_dir}}' '{{docs_dir}}'
 
 check: format-check lint typecheck test list smoke

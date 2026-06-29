@@ -19,7 +19,13 @@ htmlcov/
 .env.local
 .env.prod
 
-# InspectAI specific. 
-## Raw logs can contain prompts, model outputs, grader comments, and metadata.
-logs/
-logs-www
+# InspectAI specific.
+## Raw eval logs can contain prompts, model outputs, grader comments, and metadata.
+## The committed logs in `logs/` are generated from synthetic / published-source
+## scenarios and are published intentionally via GitHub Pages (see docs/ and
+## `just bundle-logs`). Review before committing any logs produced from private
+## prompts, real-world data, or non-public material.
+##
+## `logs-www/` is the legacy local bundle output; the published bundle now lives in
+## `docs/logs/` and IS committed.
+logs-www/

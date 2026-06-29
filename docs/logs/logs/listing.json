@@ -1,0 +1,218 @@
+{
+  "2026-06-26T21-08-24-00-00_civic-misinfo_Ak4MG5EfcRfMAL22mDdJKj.eval": {
+    "eval_id": "dWCnsKMep9LCUyVoaeiyNi",
+    "run_id": "NgHtb5cKr2qJVmE5bZ6WPG",
+    "task": "civic_misinfo",
+    "task_id": "Ak4MG5EfcRfMAL22mDdJKj",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-sonnet-4-5",
+    "model_roles": {
+      "grader": "anthropic/claude-sonnet-4-5"
+    },
+    "started_at": "2026-06-26T21:08:25+00:00",
+    "completed_at": "2026-06-26T21:12:57+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.8703703703703703,
+      "params": {}
+    }
+  },
+  "2026-06-26T19-34-06-00-00_civic-misinfo_GgaVbTbrf5Zwrsw9iT3ibE.eval": {
+    "eval_id": "AuMP7byqsTMe5BmbeHyN9r",
+    "run_id": "VGsSBvf4FyZx9wpFVafZAd",
+    "task": "civic_misinfo",
+    "task_id": "GgaVbTbrf5Zwrsw9iT3ibE",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/tencent/hy3-preview",
+    "started_at": "2026-06-26T19:34:24+00:00",
+    "completed_at": "2026-06-26T19:38:41+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.7592592592592593,
+      "params": {}
+    }
+  },
+  "2026-06-26T19-34-06-00-00_civic-misinfo_DY5rGEqNkwZa4pBmjaq68K.eval": {
+    "eval_id": "LthH7u9HymwrobD3nPY6AJ",
+    "run_id": "VGsSBvf4FyZx9wpFVafZAd",
+    "task": "civic_misinfo",
+    "task_id": "DY5rGEqNkwZa4pBmjaq68K",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/tencent/hy3-preview",
+    "started_at": "2026-06-26T19:34:06+00:00",
+    "completed_at": "2026-06-26T19:38:11+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.7222222222222222,
+      "params": {}
+    }
+  },
+  "2026-06-26T19-34-06-00-00_civic-misinfo_ic2nRdQFZ8xnZjDQB4CV7u.eval": {
+    "eval_id": "NwD2D5vee6d7hiCeRE2YAw",
+    "run_id": "VGsSBvf4FyZx9wpFVafZAd",
+    "task": "civic_misinfo",
+    "task_id": "ic2nRdQFZ8xnZjDQB4CV7u",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/xiaomi/mimo-v2.5",
+    "started_at": "2026-06-26T19:34:06+00:00",
+    "completed_at": "2026-06-26T19:35:27+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.8888888888888888,
+      "params": {}
+    }
+  },
+  "2026-06-26T19-34-05-00-00_civic-misinfo_8SvZ7MGHyxTBkHAK7MBY3f.eval": {
+    "eval_id": "6hLvYeH3M7TAgqAqCe2Jty",
+    "run_id": "VGsSBvf4FyZx9wpFVafZAd",
+    "task": "civic_misinfo",
+    "task_id": "8SvZ7MGHyxTBkHAK7MBY3f",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/deepseek/deepseek-v4-flash",
+    "started_at": "2026-06-26T19:34:06+00:00",
+    "completed_at": "2026-06-26T19:34:57+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.7037037037037037,
+      "params": {}
+    }
+  },
+  "2026-06-26T19-34-05-00-00_civic-misinfo_McLpnBRmhrj8mvV9Kd9Upr.eval": {
+    "eval_id": "aFZYcQSrsnuThkHRTyVLn9",
+    "run_id": "VGsSBvf4FyZx9wpFVafZAd",
+    "task": "civic_misinfo",
+    "task_id": "McLpnBRmhrj8mvV9Kd9Upr",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "mistral/mistral-medium-3-5",
+    "started_at": "2026-06-26T19:34:06+00:00",
+    "completed_at": "2026-06-26T19:34:24+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.7222222222222222,
+      "params": {}
+    }
+  },
+  "2026-06-26T14-42-23-00-00_civic-misinfo-advanced_gJNQJAWAfnuRJdiSVLi9Sq.eval": {
+    "eval_id": "g5BRyej9vP52QWfiGm2YJZ",
+    "run_id": "iXVXjK2LbjpUr8LqdHrusn",
+    "task": "civic_misinfo_advanced",
+    "task_id": "gJNQJAWAfnuRJdiSVLi9Sq",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "mistral/mistral-medium-3-5",
+    "model_roles": {
+      "grader": "mistral/mistral-medium-3-5"
+    },
+    "started_at": "2026-06-26T14:42:23+00:00",
+    "completed_at": "2026-06-26T14:43:36+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.7222222222222222,
+      "params": {}
+    }
+  },
+  "2026-06-26T13-09-30-00-00_civic-misinfo-advanced_YmgSSL64rfbq2aqLUSrfc6.eval": {
+    "eval_id": "NGEmVHwDnwnaskBEjzU7M4",
+    "run_id": "Jvwuhraw5rMUvH6EjLd659",
+    "task": "civic_misinfo_advanced",
+    "task_id": "YmgSSL64rfbq2aqLUSrfc6",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-sonnet-4-5",
+    "model_roles": {
+      "grader": "anthropic/claude-sonnet-4-5"
+    },
+    "started_at": "2026-06-26T13:09:30+00:00",
+    "completed_at": "2026-06-26T13:10:16+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.5740740740740741,
+      "params": {}
+    }
+  },
+  "2026-06-26T13-05-48-00-00_civic-misinfo-advanced_Xpior7SPA8K7hGb7xCKe9v.eval": {
+    "eval_id": "BvhogchQajRteRwZbo42hG",
+    "run_id": "MjXBkLTJ6VwvmVyuDPffZz",
+    "task": "civic_misinfo_advanced",
+    "task_id": "Xpior7SPA8K7hGb7xCKe9v",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/deepseek/deepseek-v4-flash",
+    "model_roles": {
+      "grader": "openrouter/deepseek/deepseek-v4-flash"
+    },
+    "started_at": "2026-06-26T13:05:48+00:00",
+    "completed_at": "2026-06-26T13:07:35+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.5277777777777778,
+      "params": {}
+    }
+  },
+  "2026-06-26T13-03-54-00-00_civic-misinfo_2JDpsjeBHMVKuEFxL6MuR3.eval": {
+    "eval_id": "djZpaVdi5vLLuJH3BpKhpN",
+    "run_id": "6bH3eRndUjPkFqkt9Kd9Ji",
+    "task": "civic_misinfo",
+    "task_id": "2JDpsjeBHMVKuEFxL6MuR3",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/x-ai/grok-4.3",
+    "model_roles": {
+      "grader": "openrouter/x-ai/grok-4.3"
+    },
+    "started_at": "2026-06-26T13:03:54+00:00",
+    "completed_at": "2026-06-26T13:04:17+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.7777777777777778,
+      "params": {}
+    }
+  },
+  "2026-06-26T13-02-07-00-00_civic-misinfo_3nvTKYuV2ReQ8YXLnsHvQY.eval": {
+    "eval_id": "Zx95r2v3jX6itgxFFDu2iC",
+    "run_id": "D7mgKVvxWHKhEbAufMTBwz",
+    "task": "civic_misinfo",
+    "task_id": "3nvTKYuV2ReQ8YXLnsHvQY",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/deepseek/deepseek-v4-flash",
+    "model_roles": {
+      "grader": "openrouter/deepseek/deepseek-v4-flash"
+    },
+    "started_at": "2026-06-26T13:02:07+00:00",
+    "completed_at": "2026-06-26T13:03:06+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.7222222222222222,
+      "params": {}
+    }
+  }
+}

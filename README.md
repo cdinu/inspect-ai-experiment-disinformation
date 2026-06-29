@@ -41,7 +41,9 @@ The repository contains:
 * a small synthetic dataset with sample content, user requests, and expected behaviours;
 * an advanced dataset generated from real published misinformation sources;
 * Inspect-based evaluation scripts for running the samples against language models;
-* optional GitHub Pages deployment of bundled Inspect logs using `inspect view bundle`.
+* committed example evaluation logs under `logs/`;
+* a published GitHub Pages site under `docs/` with a landing page and the bundled
+  Inspect log viewer (`inspect view bundle`).
 
 ## Project layout
 
@@ -128,7 +130,8 @@ The supported path variables are:
 * `ADVANCED_SCENARIOS_DIR`: advanced real-source scenario directory used by the
   `eval-advanced` recipes, default `data/advanced`.
 * `INSPECT_LOG_DIR`: Inspect eval log directory, default `logs`.
-* `INSPECT_BUNDLE_DIR`: bundled Inspect viewer output, default `logs-www`.
+* `INSPECT_BUNDLE_DIR`: bundled Inspect viewer output, default `docs/logs` (served
+  by GitHub Pages).
 * `SMOKE_LOG_DIR`: smoke-test log directory, default `/private/tmp/misinfo-inspect-logs`.
 * `INCLUDE_SOURCE_METADATA`: whether source fields are shown to the evaluated model,
   default `false`.
@@ -247,11 +250,30 @@ View logs:
 just view
 ```
 
-Bundle reviewed logs for static hosting:
+## Publishing logs with GitHub Pages
+
+The `docs/` folder is a self-contained static site intended to be served by
+GitHub Pages:
+
+* `docs/index.html`: a landing page describing the project and linking to the viewer.
+* `docs/logs/`: the bundled Inspect log viewer (`index.html`, `assets/`, and the
+  exported `.eval` logs), produced by `inspect view bundle`.
+* `docs/.nojekyll`: disables Jekyll so the viewer's assets are served verbatim.
+* `docs/label-guide.md`, `docs/advanced-sources.md`: supporting documentation.
+
+The committed source-of-truth logs live in `logs/`. Regenerate the published
+viewer from them after a new run:
 
 ```sh
 just bundle-logs
 ```
+
+This writes the viewer into `docs/logs/` (override with `INSPECT_BUNDLE_DIR`) and
+refreshes `docs/.nojekyll`. Commit the updated `logs/` and `docs/` together.
+
+To enable hosting, in the GitHub repository settings open **Pages**, choose
+**Deploy from a branch**, and select the `main` branch with the `/docs` folder.
+The site is then served at `https://<owner>.github.io/<repo>/`.
 
 ## Adding a scenario
 
