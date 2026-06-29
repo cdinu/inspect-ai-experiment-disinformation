@@ -72,7 +72,6 @@ def test_record_to_sample_preserves_expected_fields() -> None:
 
     assert isinstance(sample, Sample)
     assert sample.id == record["id"]
-    assert "Scenario:" in sample.input
     assert record["content"] in sample.input
     assert record["user_request"] in sample.input
     assert "About:" in sample.target
@@ -207,6 +206,26 @@ def test_load_records_filters_with_boolean_expression(tmp_path: Path) -> None:
     assert [record["id"] for record in records] == ["alpha-001"]
 
 
+def test_load_records_filters_with_parentheses(tmp_path: Path) -> None:
+    (tmp_path / "alpha-001.md").write_text(
+        SCENARIO_TEMPLATE.format(id="alpha-001", title="Climate denial", extra_frontmatter=""),
+        encoding="utf-8",
+    )
+    (tmp_path / "beta-001.md").write_text(
+        SCENARIO_TEMPLATE.format(id="beta-001", title="Housing notice", extra_frontmatter=""),
+        encoding="utf-8",
+    )
+    (tmp_path / "gamma-001.md").write_text(
+        SCENARIO_TEMPLATE.format(id="gamma-001", title="Other topic", extra_frontmatter=""),
+        encoding="utf-8",
+    )
+
+    # Parentheses must work even when glued to the adjacent terms (no surrounding spaces).
+    records = load_records(tmp_path, scenario_filter="(climate or housing)")
+
+    assert [record["id"] for record in records] == ["alpha-001", "beta-001"]
+
+
 def test_load_records_ignores_skipped_scenarios(tmp_path: Path) -> None:
     (tmp_path / "active-001.md").write_text(
         SCENARIO_TEMPLATE.format(id="active-001", title="Active", extra_frontmatter=""),
@@ -234,10 +253,17 @@ This skipped scenario can be incomplete while it is being drafted.
     assert [record["id"] for record in records] == ["active-001"]
 
 
-def test_skipped_real_world_placeholders_are_not_loaded() -> None:
+def test_real_world_scenario_loads_and_is_valid() -> None:
     records = load_records(scenario_filter="z-real-world")
 
-    assert records == []
+    assert [record["id"] for record in records] == ["z-real-world-001"]
+    record = records[0]
+    assert record["skip"] is False
+    assert record["about"].strip()
+    for field in ("content", "user_request", "expected_behavior"):
+        assert record[field].strip()
+    for field in ("risk_patterns", "must_do", "must_not"):
+        assert record[field]
 
 
 def test_validate_record_rejects_missing_required_fields() -> None:

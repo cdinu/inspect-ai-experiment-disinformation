@@ -25,7 +25,7 @@ SECTION_FIELDS: Final = {
 
 FRONT_MATTER_RE: Final = re.compile(r"\A---\s*\n(.*?)\n---\s*(?:\n|\Z)", re.DOTALL)
 SECTION_RE: Final = re.compile(r"(?m)^## ([^\n]+)\n")
-FILTER_TOKEN_RE: Final = re.compile(r'"([^"]+)"|\'([^\']+)\'|([()])|(\S+)')
+FILTER_TOKEN_RE: Final = re.compile(r'"([^"]+)"|\'([^\']+)\'|([()])|([^\s()]+)')
 
 REQUIRED_FIELDS: Final = {
     "id",
