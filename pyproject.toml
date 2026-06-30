@@ -16,6 +16,8 @@ dependencies = [
 [dependency-groups]
 dev = [
     "mypy>=1.19.1",
+    "pandas>=3.0.3",
+    "pyarrow>=24.0.0",
     "pytest>=9.0.0",
     "ruff>=0.14.0",
     "types-pyyaml>=6.0.12.20250915",

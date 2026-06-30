@@ -51,6 +51,16 @@ eval-guided model filter="":
     @mkdir -p {{log_dir}}
     @model_arg="{{model}}"; role_args=(); if [[ -n "{{grader_model}}" ]]; then role_args=(--model-role "grader={{grader_model}}"); elif [[ "$model_arg" != *,* ]]; then role_args=(--model-role "grader=$model_arg"); fi; filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo_guided --model "$model_arg" "${role_args[@]}" -T scenarios_dir={{scenarios_dir}} -T include_source_metadata={{include_source_metadata}} "${filter_args[@]}" --log-dir {{log_dir}}
 
+# Multi-turn pressure task. Defaults to the `pressure-*` scenarios; pass a filter to override.
+eval-pressure model filter="pressure":
+    @mkdir -p {{log_dir}}
+    @model_arg="{{model}}"; role_args=(); if [[ -n "{{grader_model}}" ]]; then role_args=(--model-role "grader={{grader_model}}"); elif [[ "$model_arg" != *,* ]]; then role_args=(--model-role "grader=$model_arg"); fi; filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo_pressure --model "$model_arg" "${role_args[@]}" -T scenarios_dir={{scenarios_dir}} -T include_source_metadata={{include_source_metadata}} "${filter_args[@]}" --log-dir {{log_dir}}
+
+# Tool-grounding task (mock fetch_url). Defaults to the `grounded-*` scenarios; pass a filter to override.
+eval-grounded model filter="grounded":
+    @mkdir -p {{log_dir}}
+    @model_arg="{{model}}"; role_args=(); if [[ -n "{{grader_model}}" ]]; then role_args=(--model-role "grader={{grader_model}}"); elif [[ "$model_arg" != *,* ]]; then role_args=(--model-role "grader=$model_arg"); fi; filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo_grounded --model "$model_arg" "${role_args[@]}" -T scenarios_dir={{scenarios_dir}} -T include_source_metadata={{include_source_metadata}} "${filter_args[@]}" --log-dir {{log_dir}}
+
 smoke filter="":
     @mkdir -p {{smoke_log_dir}}
     @filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo --model mockllm/model --model-role grader=mockllm/model -T scenarios_dir={{scenarios_dir}} -T include_source_metadata={{include_source_metadata}} "${filter_args[@]}" --limit 1 --display none --log-dir {{smoke_log_dir}}
@@ -70,10 +80,17 @@ eval-advanced-guided model filter="":
 view:
     uv run inspect view --log-dir {{log_dir}}
 
-# Export the committed logs as a static viewer under docs/ for GitHub Pages.
+# Rank scenarios by difficulty (mean model-graded score) across all runs in the log dir.
+# Optional task substring filter, e.g. `just hardest pressure`.
+hardest task="":
+    @HOME={{inspect_home}} uv run python scripts/scenario_difficulty.py --log-dir {{log_dir}} --task "{{task}}"
+
+# Export the committed logs as a static viewer under docs/ for GitHub Pages,
+# and inject the scenario-difficulty table into the docs landing page.
 bundle-logs:
     uv run inspect view bundle --log-dir {{log_dir}} --output-dir {{bundle_dir}} --overwrite
     @touch {{docs_dir}}/.nojekyll
+    @HOME={{inspect_home}} uv run python scripts/scenario_difficulty.py --log-dir {{log_dir}} --top 25 --html-into {{docs_dir}}/index.html
     @printf 'Bundled %s into %s. Landing page: %s/index.html\n' '{{log_dir}}' '{{bundle_dir}}' '{{docs_dir}}'
 
 check: format-check lint typecheck test list smoke

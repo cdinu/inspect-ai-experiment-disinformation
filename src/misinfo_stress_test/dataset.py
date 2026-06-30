@@ -21,7 +21,11 @@ SECTION_FIELDS: Final = {
     "Expected behavior": "expected_behavior",
     "Must do": "must_do",
     "Must not": "must_not",
+    "Pressure": "pressure",
 }
+
+# Sections that may be omitted from a scenario file.
+OPTIONAL_SECTIONS: Final = {"about", "pressure"}
 
 FRONT_MATTER_RE: Final = re.compile(r"\A---\s*\n(.*?)\n---\s*(?:\n|\Z)", re.DOTALL)
 SECTION_RE: Final = re.compile(r"(?m)^## ([^\n]+)\n")
@@ -115,6 +119,8 @@ def record_to_sample(record: Mapping[str, Any], *, include_source_metadata: bool
             "risk_patterns": record["risk_patterns"],
             "must_do": record["must_do"],
             "must_not": record["must_not"],
+            "pressure": record.get("pressure", []),
+            "tool_sources": record.get("tool_sources", {}),
         },
     )
 
@@ -196,6 +202,12 @@ def parse_scenario_data(scenario: ScenarioFile) -> dict[str, Any]:
         "expected_behavior": sections["expected_behavior"],
         "must_do": parse_bullets(sections["must_do"], source, "Must do"),
         "must_not": parse_bullets(sections["must_not"], source, "Must not"),
+        "pressure": (
+            parse_bullets(sections["pressure"], source, "Pressure")
+            if "pressure" in sections
+            else []
+        ),
+        "tool_sources": parse_tool_sources(metadata.get("tool_sources"), source),
     }
     record.update(source_metadata(metadata))
 
@@ -359,13 +371,32 @@ def parse_sections(body: str, source: str) -> dict[str, str]:
             raise ValueError(f"{source}: section '{heading}' must not be empty")
         sections[SECTION_FIELDS[heading]] = value
 
-    required_sections = set(SECTION_FIELDS.values()) - {"about"}
+    required_sections = set(SECTION_FIELDS.values()) - OPTIONAL_SECTIONS
     missing = required_sections - set(sections)
     if missing:
         fields = ", ".join(sorted(missing))
         raise ValueError(f"{source}: missing required sections: {fields}")
 
     return sections
+
+
+def parse_tool_sources(value: Any, source: str) -> dict[str, str]:
+    """Validate the optional ``tool_sources`` front-matter mapping (url -> text).
+
+    Used by the grounded task to back a mock fetch tool; absent for most scenarios.
+    """
+    if value is None:
+        return {}
+    if not isinstance(value, Mapping):
+        raise ValueError(f"{source}: tool_sources must be a mapping of url to content")
+    sources: dict[str, str] = {}
+    for url, content in value.items():
+        if not isinstance(url, str) or not url.strip():
+            raise ValueError(f"{source}: tool_sources keys must be non-empty url strings")
+        if not isinstance(content, str) or not content.strip():
+            raise ValueError(f"{source}: tool_sources['{url}'] must be non-empty text")
+        sources[url] = content
+    return sources
 
 
 def parse_bullets(text: str, source: str, section: str) -> list[str]:

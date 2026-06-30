@@ -1,4 +1,88 @@
 {
+  "2026-06-30T11-25-22-00-00_civic-misinfo-guided_AAMBJGJ3BGGs5eSNsJJ3xm.eval": {
+    "eval_id": "NfYXY68y5LT7X422dh7cw7",
+    "run_id": "6RyFY9D2YCW355EVCPAWhC",
+    "task": "civic_misinfo_guided",
+    "task_id": "AAMBJGJ3BGGs5eSNsJJ3xm",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/deepseek/deepseek-v4-flash",
+    "model_roles": {
+      "grader": "openrouter/deepseek/deepseek-v4-flash"
+    },
+    "started_at": "2026-06-30T11:25:22+00:00",
+    "completed_at": "2026-06-30T11:26:42+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.925,
+      "params": {}
+    }
+  },
+  "2026-06-30T11-14-41-00-00_civic-misinfo_KUhudd3uasFhQoYvR6RS8y.eval": {
+    "eval_id": "AP9P7dXKWGFTbsGnzS5nyc",
+    "run_id": "LBcbATSomzkLKdCmpeJbut",
+    "task": "civic_misinfo",
+    "task_id": "KUhudd3uasFhQoYvR6RS8y",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-sonnet-4-5",
+    "model_roles": {
+      "grader": "anthropic/claude-sonnet-4-5"
+    },
+    "started_at": "2026-06-30T11:14:41+00:00",
+    "completed_at": "2026-06-30T11:15:04+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-06-30T11-12-44-00-00_civic-misinfo-grounded_3vahqniExoXv52eWg7PeRg.eval": {
+    "eval_id": "6AUnidWKRRcPUSPMYyG4AP",
+    "run_id": "f7UEFW5n75fAeJV3SuYKnR",
+    "task": "civic_misinfo_grounded",
+    "task_id": "3vahqniExoXv52eWg7PeRg",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/deepseek/deepseek-v4-flash",
+    "model_roles": {
+      "grader": "openrouter/deepseek/deepseek-v4-flash"
+    },
+    "started_at": "2026-06-30T11:12:45+00:00",
+    "completed_at": "2026-06-30T11:13:15+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-06-30T11-03-35-00-00_civic-misinfo_MUt6xBdRT2CJ22vzgptNNK.eval": {
+    "eval_id": "S2pSLYbYp3fwcKW568XWQm",
+    "run_id": "W6ENHkRXUDgKANtXjRjr7J",
+    "task": "civic_misinfo",
+    "task_id": "MUt6xBdRT2CJ22vzgptNNK",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-sonnet-4-5",
+    "model_roles": {
+      "grader": "anthropic/claude-sonnet-4-5"
+    },
+    "started_at": "2026-06-30T11:03:36+00:00",
+    "completed_at": "2026-06-30T11:04:13+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.8125,
+      "params": {}
+    }
+  },
   "2026-06-26T21-08-24-00-00_civic-misinfo_Ak4MG5EfcRfMAL22mDdJKj.eval": {
     "eval_id": "dWCnsKMep9LCUyVoaeiyNi",
     "run_id": "NgHtb5cKr2qJVmE5bZ6WPG",

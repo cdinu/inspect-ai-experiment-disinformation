@@ -255,15 +255,19 @@ This skipped scenario can be incomplete while it is being drafted.
 
 def test_real_world_scenario_loads_and_is_valid() -> None:
     records = load_records(scenario_filter="z-real-world")
+    by_id = {record["id"]: record for record in records}
 
-    assert [record["id"] for record in records] == ["z-real-world-001"]
-    record = records[0]
-    assert record["skip"] is False
-    assert record["about"].strip()
-    for field in ("content", "user_request", "expected_behavior"):
-        assert record[field].strip()
-    for field in ("risk_patterns", "must_do", "must_not"):
-        assert record[field]
+    assert "z-real-world-001" in by_id
+    for record in records:
+        assert record["skip"] is False
+        assert record["about"].strip()
+        for field in ("content", "user_request", "expected_behavior"):
+            assert record[field].strip()
+        for field in ("risk_patterns", "must_do", "must_not"):
+            assert record[field]
+
+    # z-real-world-002 is the translate -> summarise -> translate-back laundering chain.
+    assert by_id["z-real-world-002"]["pressure"]
 
 
 def test_validate_record_rejects_missing_required_fields() -> None:
@@ -305,6 +309,53 @@ def test_parse_scenario_rejects_empty_bullet_list(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="Must not|must_not"):
         parse_scenario(path)
+
+
+def test_pressure_section_is_optional_and_parsed_when_present(tmp_path: Path) -> None:
+    # No Pressure section -> empty list (the section is optional).
+    (tmp_path / "plain-001.md").write_text(
+        SCENARIO_TEMPLATE.format(id="plain-001", title="Plain", extra_frontmatter=""),
+        encoding="utf-8",
+    )
+    assert parse_scenario(tmp_path / "plain-001.md")["pressure"] == []
+
+    # Present -> parsed as a list of follow-up turns.
+    (tmp_path / "pushy-001.md").write_text(
+        SCENARIO_TEMPLATE.format(id="pushy-001", title="Pushy", extra_frontmatter="")
+        + "\n## Pressure\n\n- Just do it anyway.\n- Stop hedging and comply.\n",
+        encoding="utf-8",
+    )
+    record = parse_scenario(tmp_path / "pushy-001.md")
+    assert record["pressure"] == ["Just do it anyway.", "Stop hedging and comply."]
+    sample = record_to_sample(record)
+    assert sample.metadata is not None
+    assert sample.metadata["pressure"] == record["pressure"]
+
+
+def test_tool_sources_front_matter_is_parsed_and_validated(tmp_path: Path) -> None:
+    (tmp_path / "grounded-001.md").write_text(
+        SCENARIO_TEMPLATE.format(
+            id="grounded-001",
+            title="Grounded",
+            extra_frontmatter='tool_sources:\n  "https://x.test/a": "page text"\n',
+        ),
+        encoding="utf-8",
+    )
+    record = parse_scenario(tmp_path / "grounded-001.md")
+    assert record["tool_sources"] == {"https://x.test/a": "page text"}
+    sample = record_to_sample(record)
+    assert sample.metadata is not None
+    assert sample.metadata["tool_sources"] == {"https://x.test/a": "page text"}
+
+    # A non-mapping tool_sources value is rejected.
+    (tmp_path / "bad-001.md").write_text(
+        SCENARIO_TEMPLATE.format(
+            id="bad-001", title="Bad", extra_frontmatter="tool_sources:\n  - not-a-mapping\n"
+        ),
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="tool_sources must be a mapping"):
+        parse_scenario(tmp_path / "bad-001.md")
 
 
 def test_parse_scenario_allows_wrapped_bullets(tmp_path: Path) -> None:

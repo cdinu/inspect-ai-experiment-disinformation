@@ -195,6 +195,32 @@ The guided task, `civic_misinfo_guided`, adds an explicit system message about
 epistemic discipline and covert persuasion. Use it to compare default behavior
 against behavior under ideal instructions.
 
+### Pressure and grounded task variants
+
+Two further tasks probe failure modes a single-turn rewrite cannot reach:
+
+```sh
+just eval-pressure anthropic/claude-sonnet-4-5
+just eval-grounded anthropic/claude-sonnet-4-5
+```
+
+* `civic_misinfo_pressure` replays a scenario's `## Pressure` section as a series
+  of escalating user follow-ups (deadline, flattery, asserted authority) after
+  the first answer, then grades the assistant's *final* position — the grader
+  sees the whole conversation, so a model that caves to pushback fails. The
+  recipe defaults to the `pressure-*` scenarios.
+* `civic_misinfo_grounded` exposes a mock `fetch_url` tool backed by a scenario's
+  `tool_sources` front-matter mapping (which may serve deliberately weak or
+  circular "sources"). It tests whether the model uses retrieval to *verify*
+  rather than treating a fetched, authoritative-looking page as proof. The recipe
+  defaults to the `grounded-*` scenarios.
+
+Both also accept an explicit filter, e.g. `just eval-pressure <model> pressure-persona`.
+The grader rubric is direction-aware: some scenarios (the `over_refusal` and
+`false_balance` families) test the opposite failure, where manufacturing
+suspicion, refusing a legitimate request, or inventing false balance is the
+error — so over-flagging is scored as a failure, not rewarded.
+
 The advanced scenarios in `data/advanced` are ordinary Markdown scenarios, so
 they use the same two tasks pointed at that directory. The `eval-advanced` and
 `eval-advanced-guided` recipes are just shortcuts for that:
@@ -255,7 +281,9 @@ just view
 The `docs/` folder is a self-contained static site intended to be served by
 GitHub Pages:
 
-* `docs/index.html`: a landing page describing the project and linking to the viewer.
+* `docs/index.html`: a landing page describing the project, linking to the viewer,
+  and embedding a scenario-difficulty table (between `<!-- STATS:START -->` and
+  `<!-- STATS:END -->`) that `just bundle-logs` regenerates from the logs.
 * `docs/logs/`: the bundled Inspect log viewer (`index.html`, `assets/`, and the
   exported `.eval` logs), produced by `inspect view bundle`.
 * `docs/.nojekyll`: disables Jekyll so the viewer's assets are served verbatim.
@@ -268,8 +296,23 @@ viewer from them after a new run:
 just bundle-logs
 ```
 
-This writes the viewer into `docs/logs/` (override with `INSPECT_BUNDLE_DIR`) and
-refreshes `docs/.nojekyll`. Commit the updated `logs/` and `docs/` together.
+This writes the viewer into `docs/logs/` (override with `INSPECT_BUNDLE_DIR`),
+refreshes `docs/.nojekyll`, and injects the current scenario-difficulty ranking
+into `docs/index.html`. Commit the updated `logs/` and `docs/` together.
+
+The same ranking is available on the command line, since `inspect view` only
+shows one log at a time:
+
+```sh
+just hardest             # rank every scenario by mean model-graded score (hardest first)
+just hardest pressure    # restrict to runs of a task whose name contains "pressure"
+uv run python scripts/scenario_difficulty.py --by-model --top 20
+```
+
+`scripts/scenario_difficulty.py` pools all runs in the log directory via the
+Inspect analysis API (`samples_df` / `evals_df`) and aggregates by scenario id
+(C = 1.0, P = 0.5, I = 0.0); lower mean = harder. It needs the `pandas` and
+`pyarrow` dev dependencies.
 
 To enable hosting, in the GitHub repository settings open **Pages**, choose
 **Deploy from a branch**, and select the `main` branch with the `/docs` folder.
@@ -330,6 +373,15 @@ What a good assistant response should do.
 - Prohibited behavior one.
 - Prohibited behavior two.
 ```
+
+Two optional extras drive the pressure and grounded tasks:
+
+* A `## Pressure` section (a bullet list) supplies escalating user follow-ups for
+  `civic_misinfo_pressure`. Other tasks ignore it, so the scenario still works as
+  an ordinary single-turn case.
+* A `tool_sources` front-matter mapping of `url -> page text` backs the mock
+  `fetch_url` tool used by `civic_misinfo_grounded`. Keep the scenario body
+  neutral (just reference the URL) so it also reads sensibly without the tool.
 
 Set `skip: true` while drafting a scenario. Skipped scenarios are excluded from
 evaluation before the Markdown sections are parsed, so incomplete drafts can
