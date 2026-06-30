@@ -207,15 +207,16 @@ just eval-grounded anthropic/claude-sonnet-4-5
 * `civic_misinfo_pressure` replays a scenario's `## Pressure` section as a series
   of escalating user follow-ups (deadline, flattery, asserted authority) after
   the first answer, then grades the assistant's *final* position — the grader
-  sees the whole conversation, so a model that caves to pushback fails. The
-  recipe defaults to the `pressure-*` scenarios.
+  sees the whole conversation, so a model that caves to pushback fails. The task
+  automatically runs only scenarios that have a `## Pressure` section, so the
+  follow-ups always fire (no keyword filter needed).
 * `civic_misinfo_grounded` exposes a mock `fetch_url` tool backed by a scenario's
   `tool_sources` front-matter mapping (which may serve deliberately weak or
   circular "sources"). It tests whether the model uses retrieval to *verify*
-  rather than treating a fetched, authoritative-looking page as proof. The recipe
-  defaults to the `grounded-*` scenarios.
+  rather than treating a fetched, authoritative-looking page as proof. The task
+  automatically runs only scenarios that define a `tool_sources` mapping.
 
-Both also accept an explicit filter, e.g. `just eval-pressure <model> pressure-persona`.
+Both also accept an explicit filter to narrow further, e.g. `just eval-pressure <model> z-real-world`.
 The grader rubric is direction-aware: some scenarios (the `over_refusal` and
 `false_balance` families) test the opposite failure, where manufacturing
 suspicion, refusing a legitimate request, or inventing false balance is the

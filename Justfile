@@ -51,13 +51,13 @@ eval-guided model filter="":
     @mkdir -p {{log_dir}}
     @model_arg="{{model}}"; role_args=(); if [[ -n "{{grader_model}}" ]]; then role_args=(--model-role "grader={{grader_model}}"); elif [[ "$model_arg" != *,* ]]; then role_args=(--model-role "grader=$model_arg"); fi; filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo_guided --model "$model_arg" "${role_args[@]}" -T scenarios_dir={{scenarios_dir}} -T include_source_metadata={{include_source_metadata}} "${filter_args[@]}" --log-dir {{log_dir}}
 
-# Multi-turn pressure task. Defaults to the `pressure-*` scenarios; pass a filter to override.
-eval-pressure model filter="pressure":
+# Multi-turn pressure task. Auto-runs only scenarios with a `## Pressure` section; optional filter narrows further.
+eval-pressure model filter="":
     @mkdir -p {{log_dir}}
     @model_arg="{{model}}"; role_args=(); if [[ -n "{{grader_model}}" ]]; then role_args=(--model-role "grader={{grader_model}}"); elif [[ "$model_arg" != *,* ]]; then role_args=(--model-role "grader=$model_arg"); fi; filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo_pressure --model "$model_arg" "${role_args[@]}" -T scenarios_dir={{scenarios_dir}} -T include_source_metadata={{include_source_metadata}} "${filter_args[@]}" --log-dir {{log_dir}}
 
-# Tool-grounding task (mock fetch_url). Defaults to the `grounded-*` scenarios; pass a filter to override.
-eval-grounded model filter="grounded":
+# Tool-grounding task (mock fetch_url). Auto-runs only scenarios with a `tool_sources` mapping; optional filter narrows further.
+eval-grounded model filter="":
     @mkdir -p {{log_dir}}
     @model_arg="{{model}}"; role_args=(); if [[ -n "{{grader_model}}" ]]; then role_args=(--model-role "grader={{grader_model}}"); elif [[ "$model_arg" != *,* ]]; then role_args=(--model-role "grader=$model_arg"); fi; filter_args=(); if [[ -n "{{filter}}" ]]; then filter_args=(-T "scenario_filter={{filter}}"); fi; HOME={{inspect_home}} INSPECT_TRACE_FILE={{trace_file}} uv run inspect eval src/misinfo_stress_test/tasks.py@civic_misinfo_grounded --model "$model_arg" "${role_args[@]}" -T scenarios_dir={{scenarios_dir}} -T include_source_metadata={{include_source_metadata}} "${filter_args[@]}" --log-dir {{log_dir}}
 

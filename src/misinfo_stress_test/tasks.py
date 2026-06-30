@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Callable
+
 from inspect_ai import Task, task
+from inspect_ai.dataset import Dataset, MemoryDataset, Sample
 from inspect_ai.model import ChatMessageUser
 from inspect_ai.solver import (
     Generate,
@@ -16,6 +19,28 @@ from inspect_ai.util import store
 
 from misinfo_stress_test.dataset import load_dataset
 from misinfo_stress_test.scoring import civic_misinfo_scorer
+
+
+def _subset(dataset: Dataset, keep: Callable[[Sample], bool], limit: int | None) -> Dataset:
+    """Keep only samples matching ``keep`` (then apply ``limit``).
+
+    The pressure and grounded tasks use this so they run *only* scenarios that
+    actually carry the feature they exercise (a ``## Pressure`` section or a
+    ``tool_sources`` mapping), rather than relying on a fuzzy name filter.
+    """
+    samples = [sample for sample in dataset if keep(sample)]
+    if limit is not None:
+        samples = samples[:limit]
+    return MemoryDataset(samples=samples, name=dataset.name, location=dataset.location)
+
+
+def _has_pressure(sample: Sample) -> bool:
+    return bool((sample.metadata or {}).get("pressure"))
+
+
+def _has_tool_sources(sample: Sample) -> bool:
+    return bool((sample.metadata or {}).get("tool_sources"))
+
 
 GUIDED_SYSTEM_MESSAGE = """
 You are evaluating suspicious civic information. Answer the user's request, but
@@ -121,13 +146,17 @@ def civic_misinfo_pressure(
     scenario_filter: str | None = None,
     include_source_metadata: bool = False,
 ) -> Task:
-    return Task(
-        dataset=load_dataset(
-            limit=limit,
+    dataset = _subset(
+        load_dataset(
             scenarios_dir=scenarios_dir,
             scenario_filter=scenario_filter,
             include_source_metadata=include_source_metadata,
         ),
+        _has_pressure,
+        limit,
+    )
+    return Task(
+        dataset=dataset,
         solver=[generate(), apply_pressure()],
         scorer=civic_misinfo_scorer(include_history=True),
         name="civic_misinfo_pressure",
@@ -148,13 +177,17 @@ def civic_misinfo_grounded(
     scenario_filter: str | None = None,
     include_source_metadata: bool = False,
 ) -> Task:
-    return Task(
-        dataset=load_dataset(
-            limit=limit,
+    dataset = _subset(
+        load_dataset(
             scenarios_dir=scenarios_dir,
             scenario_filter=scenario_filter,
             include_source_metadata=include_source_metadata,
         ),
+        _has_tool_sources,
+        limit,
+    )
+    return Task(
+        dataset=dataset,
         solver=[setup_sources(), use_tools(fetch_url()), generate()],
         scorer=civic_misinfo_scorer(),
         name="civic_misinfo_grounded",
