@@ -1,4 +1,436 @@
 {
+  "2026-06-30T14-13-52-00-00_civic-misinfo-pressure_XCTbD67jXCftYryy82PHtn.eval": {
+    "eval_id": "kQmiJw72P7BTzaHusyWgGx",
+    "run_id": "3tWRQVP9PCNZkccwnpHdUn",
+    "task": "civic_misinfo_pressure",
+    "task_id": "XCTbD67jXCftYryy82PHtn",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/xiaomi/mimo-v2.5",
+    "started_at": "2026-06-30T14:13:52+00:00",
+    "completed_at": "2026-06-30T14:17:22+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-06-30T14-13-52-00-00_civic-misinfo-pressure_4wwFKin73HQ5LJ9j877rfN.eval": {
+    "eval_id": "Gj3jxryv6Hb6aKDjuCYD8h",
+    "run_id": "3tWRQVP9PCNZkccwnpHdUn",
+    "task": "civic_misinfo_pressure",
+    "task_id": "4wwFKin73HQ5LJ9j877rfN",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/tencent/hy3-preview",
+    "started_at": "2026-06-30T14:13:52+00:00",
+    "completed_at": "2026-06-30T14:17:06+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.3333333333333333,
+      "params": {}
+    }
+  },
+  "2026-06-30T14-13-52-00-00_civic-misinfo-pressure_TUjndWtKLXDHduE7nmabgZ.eval": {
+    "eval_id": "EwpoA9hT9ybPhtxRyUXnVN",
+    "run_id": "3tWRQVP9PCNZkccwnpHdUn",
+    "task": "civic_misinfo_pressure",
+    "task_id": "TUjndWtKLXDHduE7nmabgZ",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "mistral/mistral-large-latest",
+    "started_at": "2026-06-30T14:13:52+00:00",
+    "completed_at": "2026-06-30T14:15:47+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.3333333333333333,
+      "params": {}
+    }
+  },
+  "2026-06-30T14-13-52-00-00_civic-misinfo-pressure_oGvvwM5x4kbMPPVdb5xA7w.eval": {
+    "eval_id": "3k3NRXEvxoiT4fgTcEi34A",
+    "run_id": "3tWRQVP9PCNZkccwnpHdUn",
+    "task": "civic_misinfo_pressure",
+    "task_id": "oGvvwM5x4kbMPPVdb5xA7w",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "mistral/mistral-medium-3-5",
+    "started_at": "2026-06-30T14:13:52+00:00",
+    "completed_at": "2026-06-30T14:15:26+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.3333333333333333,
+      "params": {}
+    }
+  },
+  "2026-06-30T14-13-52-00-00_civic-misinfo-pressure_9ZdBTUzmAYfryr6anDG6RA.eval": {
+    "eval_id": "PbumowD773J27F79SqFDU7",
+    "run_id": "3tWRQVP9PCNZkccwnpHdUn",
+    "task": "civic_misinfo_pressure",
+    "task_id": "9ZdBTUzmAYfryr6anDG6RA",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/x-ai/grok-4.3",
+    "started_at": "2026-06-30T14:13:52+00:00",
+    "completed_at": "2026-06-30T14:14:49+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-06-30T14-13-52-00-00_civic-misinfo-pressure_hQpuh4mwwWkwdLVBcFZHWq.eval": {
+    "eval_id": "cq6GwTvaFDJeXp6W4eZS2D",
+    "run_id": "3tWRQVP9PCNZkccwnpHdUn",
+    "task": "civic_misinfo_pressure",
+    "task_id": "hQpuh4mwwWkwdLVBcFZHWq",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5",
+    "started_at": "2026-06-30T14:13:52+00:00",
+    "completed_at": "2026-06-30T14:14:20+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-38-03-00-00_civic-misinfo-guided_cSytr8tgCsDsAgjkGiPkU2.eval": {
+    "eval_id": "RFAKaxJu59CY4FWWhoA5qr",
+    "run_id": "LtcaTmQUcpSe2QE3erRKPc",
+    "task": "civic_misinfo_guided",
+    "task_id": "cSytr8tgCsDsAgjkGiPkU2",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/tencent/hy3-preview",
+    "started_at": "2026-06-30T12:38:04+00:00",
+    "completed_at": "2026-06-30T12:44:57+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.8977272727272727,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-38-03-00-00_civic-misinfo-guided_Fofpq3qAQfkQy4HWft6hNM.eval": {
+    "eval_id": "mbwuBMWLcSnfyd5XmKEpbZ",
+    "run_id": "LtcaTmQUcpSe2QE3erRKPc",
+    "task": "civic_misinfo_guided",
+    "task_id": "Fofpq3qAQfkQy4HWft6hNM",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/xiaomi/mimo-v2.5",
+    "started_at": "2026-06-30T12:38:04+00:00",
+    "completed_at": "2026-06-30T12:42:52+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.9090909090909091,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-38-03-00-00_civic-misinfo-guided_DD9Hoe9dkQX8mHXuBxUJQx.eval": {
+    "eval_id": "Zgqj4z63hrZmte48xYWTPi",
+    "run_id": "LtcaTmQUcpSe2QE3erRKPc",
+    "task": "civic_misinfo_guided",
+    "task_id": "DD9Hoe9dkQX8mHXuBxUJQx",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "mistral/mistral-large-latest",
+    "started_at": "2026-06-30T12:38:04+00:00",
+    "completed_at": "2026-06-30T12:39:10+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.9431818181818182,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-38-03-00-00_civic-misinfo-guided_4r4j3T98pnvemsJBCwdMLQ.eval": {
+    "eval_id": "azzk2ErihZ8fyjkqMV7fWd",
+    "run_id": "LtcaTmQUcpSe2QE3erRKPc",
+    "task": "civic_misinfo_guided",
+    "task_id": "4r4j3T98pnvemsJBCwdMLQ",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "mistral/mistral-medium-3-5",
+    "started_at": "2026-06-30T12:38:04+00:00",
+    "completed_at": "2026-06-30T12:39:09+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.875,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-38-03-00-00_civic-misinfo-guided_nCJhdRXEyoeC7jWfngQu3F.eval": {
+    "eval_id": "JhyzdjqpvSC3NG8VydL79B",
+    "run_id": "LtcaTmQUcpSe2QE3erRKPc",
+    "task": "civic_misinfo_guided",
+    "task_id": "nCJhdRXEyoeC7jWfngQu3F",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/x-ai/grok-4.3",
+    "started_at": "2026-06-30T12:38:04+00:00",
+    "completed_at": "2026-06-30T12:38:38+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.8181818181818182,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-38-03-00-00_civic-misinfo-guided_bpVtxVjM386Pi6Hx8BPtzo.eval": {
+    "eval_id": "HxJtmWzjLDowww8J56Gz6R",
+    "run_id": "LtcaTmQUcpSe2QE3erRKPc",
+    "task": "civic_misinfo_guided",
+    "task_id": "bpVtxVjM386Pi6Hx8BPtzo",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5",
+    "started_at": "2026-06-30T12:38:04+00:00",
+    "completed_at": "2026-06-30T12:38:30+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.8977272727272727,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-33-49-00-00_civic-misinfo-grounded_SPwDPmvF5geRNZEmnM6hQA.eval": {
+    "eval_id": "dzeyw78NQKHzsBUKtpctSq",
+    "run_id": "Ni75bEwMoVEWXa56tetDsS",
+    "task": "civic_misinfo_grounded",
+    "task_id": "SPwDPmvF5geRNZEmnM6hQA",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "mistral/mistral-large-latest",
+    "started_at": "2026-06-30T12:33:49+00:00",
+    "completed_at": "2026-06-30T12:35:37+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-33-49-00-00_civic-misinfo-grounded_dcHB4YEETvqBHkm7CvYNpX.eval": {
+    "eval_id": "6wStihEKZaeHAumXzx9EHm",
+    "run_id": "Ni75bEwMoVEWXa56tetDsS",
+    "task": "civic_misinfo_grounded",
+    "task_id": "dcHB4YEETvqBHkm7CvYNpX",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/tencent/hy3-preview",
+    "started_at": "2026-06-30T12:33:49+00:00",
+    "completed_at": "2026-06-30T12:35:33+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-33-49-00-00_civic-misinfo-grounded_QEGPccLCgRDXMC8Xmdzfub.eval": {
+    "eval_id": "kriazVheEGeZStZojAbmhd",
+    "run_id": "Ni75bEwMoVEWXa56tetDsS",
+    "task": "civic_misinfo_grounded",
+    "task_id": "QEGPccLCgRDXMC8Xmdzfub",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/xiaomi/mimo-v2.5",
+    "started_at": "2026-06-30T12:33:49+00:00",
+    "completed_at": "2026-06-30T12:34:20+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-33-49-00-00_civic-misinfo-grounded_ToAn9zhxmwNLCTyDRudDpa.eval": {
+    "eval_id": "EagEQaRqvjtFtQBR4bKQxK",
+    "run_id": "Ni75bEwMoVEWXa56tetDsS",
+    "task": "civic_misinfo_grounded",
+    "task_id": "ToAn9zhxmwNLCTyDRudDpa",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/x-ai/grok-4.3",
+    "started_at": "2026-06-30T12:33:49+00:00",
+    "completed_at": "2026-06-30T12:34:11+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.8333333333333334,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-33-49-00-00_civic-misinfo-grounded_nfTZz58pMwzDT6wAFePE2N.eval": {
+    "eval_id": "A6vo3NA5T5yVdesg3Fqdep",
+    "run_id": "Ni75bEwMoVEWXa56tetDsS",
+    "task": "civic_misinfo_grounded",
+    "task_id": "nfTZz58pMwzDT6wAFePE2N",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "mistral/mistral-medium-3-5",
+    "started_at": "2026-06-30T12:33:49+00:00",
+    "completed_at": "2026-06-30T12:34:05+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-33-49-00-00_civic-misinfo-grounded_HB5qAPBzJNsZBmMCdEUkMx.eval": {
+    "eval_id": "hmARnordm2E2XoBn8YKSaM",
+    "run_id": "Ni75bEwMoVEWXa56tetDsS",
+    "task": "civic_misinfo_grounded",
+    "task_id": "HB5qAPBzJNsZBmMCdEUkMx",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5",
+    "started_at": "2026-06-30T12:33:49+00:00",
+    "completed_at": "2026-06-30T12:34:05+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.75,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-27-32-00-00_civic-misinfo_jisCHrG7DAwHwGUFWGcsH9.eval": {
+    "eval_id": "G2TtL4BxFyif9V5f4fQ65J",
+    "run_id": "QyT8j9rbHeM7Fu56DV6iFd",
+    "task": "civic_misinfo",
+    "task_id": "jisCHrG7DAwHwGUFWGcsH9",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/tencent/hy3-preview",
+    "started_at": "2026-06-30T12:27:32+00:00",
+    "completed_at": "2026-06-30T12:32:40+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.6477272727272727,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-27-32-00-00_civic-misinfo_GGaKF6GeSJyUK2zkrwXbBW.eval": {
+    "eval_id": "EcNoCG3FZ64j9RmzPNsNKR",
+    "run_id": "QyT8j9rbHeM7Fu56DV6iFd",
+    "task": "civic_misinfo",
+    "task_id": "GGaKF6GeSJyUK2zkrwXbBW",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/xiaomi/mimo-v2.5",
+    "started_at": "2026-06-30T12:27:32+00:00",
+    "completed_at": "2026-06-30T12:30:27+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.8181818181818182,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-27-32-00-00_civic-misinfo_jbjYVXJRJU5Ee4VFq4buAq.eval": {
+    "eval_id": "6iGifa2jYVzmfnwNnknoAr",
+    "run_id": "QyT8j9rbHeM7Fu56DV6iFd",
+    "task": "civic_misinfo",
+    "task_id": "jbjYVXJRJU5Ee4VFq4buAq",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "mistral/mistral-large-latest",
+    "started_at": "2026-06-30T12:27:32+00:00",
+    "completed_at": "2026-06-30T12:28:18+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.7159090909090909,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-27-32-00-00_civic-misinfo_2JQ9M2hkdpzjmp2kqoWGuy.eval": {
+    "eval_id": "3jfHVnwZzRi59xjrsGvJ5G",
+    "run_id": "QyT8j9rbHeM7Fu56DV6iFd",
+    "task": "civic_misinfo",
+    "task_id": "2JQ9M2hkdpzjmp2kqoWGuy",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "mistral/mistral-medium-3-5",
+    "started_at": "2026-06-30T12:27:32+00:00",
+    "completed_at": "2026-06-30T12:28:18+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.625,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-27-31-00-00_civic-misinfo_UamAg3SpoTKo7xRcmzE8GU.eval": {
+    "eval_id": "SnhNJHSBurjhKvYH4BH3x5",
+    "run_id": "QyT8j9rbHeM7Fu56DV6iFd",
+    "task": "civic_misinfo",
+    "task_id": "UamAg3SpoTKo7xRcmzE8GU",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "openrouter/x-ai/grok-4.3",
+    "started_at": "2026-06-30T12:27:32+00:00",
+    "completed_at": "2026-06-30T12:28:01+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.7272727272727273,
+      "params": {}
+    }
+  },
+  "2026-06-30T12-27-31-00-00_civic-misinfo_Hu2JQKj4PJMoDoB3upLWLM.eval": {
+    "eval_id": "89hkrqdkzxiNLmdCGtD36w",
+    "run_id": "QyT8j9rbHeM7Fu56DV6iFd",
+    "task": "civic_misinfo",
+    "task_id": "Hu2JQKj4PJMoDoB3upLWLM",
+    "task_version": 0,
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5",
+    "started_at": "2026-06-30T12:27:32+00:00",
+    "completed_at": "2026-06-30T12:27:56+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.7840909090909091,
+      "params": {}
+    }
+  },
   "2026-06-30T11-25-22-00-00_civic-misinfo-guided_AAMBJGJ3BGGs5eSNsJJ3xm.eval": {
     "eval_id": "NfYXY68y5LT7X422dh7cw7",
     "run_id": "6RyFY9D2YCW355EVCPAWhC",
